@@ -1,0 +1,402 @@
+name, code_nuts
+Stuttgart,DE111
+Böblingen,DE112
+Esslingen,DE113
+Göppingen,DE114
+Ludwigsburg,DE115
+Rems-Murr-Kreis,DE116
+Heilbronn,DE117
+Heilbronn,DE118
+Hohenlohekreis,DE119
+Schwäbisch Hall,DE11A
+Main-Tauber-Kreis,DE11B
+Heidenheim,DE11C
+Ostalbkreis,DE11D
+Baden-Baden,DE121
+Karlsruhe,DE122
+Karlsruhe,DE123
+Rastatt,DE124
+Heidelberg,DE125
+Mannheim,DE126
+Neckar-Odenwald-Kreis,DE127
+Rhein-Neckar-Kreis,DE128
+Pforzheim,DE129
+Calw,DE12A
+Enzkreis,DE12B
+Freudenstadt,DE12C
+Freiburg im Breisgau,DE131
+Breisgau-Hochschwarzwald,DE132
+Emmendingen,DE133
+Ortenaukreis,DE134
+Rottweil,DE135
+Schwarzwald-Baar-Kreis,DE136
+Tuttlingen,DE137
+Konstanz,DE138
+Lörrach,DE139
+Waldshut,DE13A
+Reutlingen,DE141
+Tübingen,DE142
+Zollernalbkreis,DE143
+Ulm,DE144
+Alb-Donau-Kreis,DE145
+Biberach,DE146
+Bodenseekreis,DE147
+Ravensburg,DE148
+Sigmaringen,DE149
+Ingolstadt,DE211
+München,DE212
+Rosenheim,DE213
+Altötting,DE214
+Berchtesgadener Land,DE215
+Bad Tölz-Wolfratshausen,DE216
+Dachau,DE217
+Ebersberg,DE218
+Eichstätt,DE219
+Erding,DE21A
+Freising,DE21B
+Fürstenfeldbruck,DE21C
+Garmisch-Partenkirchen,DE21D
+Landsberg am Lech,DE21E
+Miesbach,DE21F
+Mühldorf a. Inn,DE21G
+München,DE21H
+Neuburg-Schrobenhausen,DE21I
+Pfaffenhofen a. d. Ilm,DE21J
+Rosenheim,DE21K
+Starnberg,DE21L
+Traunstein,DE21M
+Weilheim-Schongau,DE21N
+Landshut,DE221
+Passau,DE222
+Straubing,DE223
+Deggendorf,DE224
+Freyung-Grafenau,DE225
+Kelheim,DE226
+Landshut,DE227
+Passau,DE228
+Regen,DE229
+Rottal-Inn,DE22A
+Straubing-Bogen,DE22B
+Dingolfing-Landau,DE22C
+Amberg,DE231
+Regensburg,DE232
+Weiden i. d. Opf,DE233
+Amberg-Sulzbach,DE234
+Cham,DE235
+Neumarkt i. d. OPf.,DE236
+Neustadt a.d.Waldnaab,DE237
+Regensburg,DE238
+Schwandorf,DE239
+Tirschenreuth,DE23A
+Bamberg,DE241
+Bayreuth,DE242
+Coburg,DE243
+Hof,DE244
+Bamberg,DE245
+Bayreuth,DE246
+Coburg,DE247
+Forchheim,DE248
+Hof,DE249
+Kronach,DE24A
+Kulmbach,DE24B
+Lichtenfels,DE24C
+Wunsiedel i. Fichtelgebirge,DE24D
+Ansbach,DE251
+Erlangen,DE252
+Fürth,DE253
+Nürnberg,DE254
+Schwabach,DE255
+Ansbach,DE256
+Erlangen-Höchstadt,DE257
+Fürth,DE258
+Nürnberger Land,DE259
+Neustadt a. d. Aisch-Bad Windsheim,DE25A
+Roth,DE25B
+Weißenburg-Gunzenhausen,DE25C
+Aschaffenburg,DE261
+Schweinfurt,DE262
+Würzburg,DE263
+Aschaffenburg,DE264
+Bad Kissingen,DE265
+Rhön-Grabfeld,DE266
+Haßberge,DE267
+Kitzingen,DE268
+Miltenberg,DE269
+Main-Spessart,DE26A
+Schweinfurt,DE26B
+Würzburg,DE26C
+Augsburg,DE271
+Kaufbeuren,DE272
+Kempten (Allgäu),DE273
+Memmingen,DE274
+Aichach-Friedberg,DE275
+Augsburg,DE276
+Dillingen a.d. Donau,DE277
+Günzburg,DE278
+Neu-Ulm,DE279
+Lindau Bodensee,DE27A
+Ostallgäu,DE27B
+Unterallgäu,DE27C
+Donau-Ries,DE27D
+Oberallgäu,DE27E
+Berlin,DE300
+Brandenburg an der Havel,DE401
+Cottbus,DE402
+Frankfurt (Oder),DE403
+Potsdam,DE404
+Barnim,DE405
+Dahme-Spreewald,DE406
+Elbe-Elster,DE407
+Havelland,DE408
+Märkisch-Oderland,DE409
+Oberhavel,DE40A
+Oberspreewald-Lausitz,DE40B
+Oder-Spree,DE40C
+Ostprignitz-Ruppin,DE40D
+Potsdam-Mittelmark,DE40E
+Prignitz,DE40F
+Spree-Neiße,DE40G
+Teltow-Fläming,DE40H
+Uckermark,DE40I
+Bremen,DE501
+Bremerhaven,DE502
+Hamburg,DE600
+Darmstadt,DE711
+Frankfurt am Main,DE712
+Offenbach am Main,DE713
+Wiesbaden,DE714
+Bergstraße,DE715
+Darmstadt-Dieburg,DE716
+Groß-Gerau,DE717
+Hochtaunuskreis,DE718
+Main-Kinzig-Kreis,DE719
+Main-Taunus-Kreis,DE71A
+Odenwaldkreis,DE71B
+Offenbach,DE71C
+Rheingau-Taunus-Kreis,DE71D
+Wetteraukreis,DE71E
+Gießen,DE721
+Lahn-Dill-Kreis,DE722
+Limburg-Weilburg,DE723
+Marburg-Biedenkopf,DE724
+Vogelsbergkreis,DE725
+Kassel,DE731
+Fulda,DE732
+Hersfeld-Rotenburg,DE733
+Kassel,DE734
+Schwalm-Eder-Kreis,DE735
+Waldeck-Frankenberg,DE736
+Werra-Meißner-Kreis,DE737
+Rostock,DE803
+Schwerin,DE804
+Mecklenburgische Seenplatte,DE80J
+Vorpommern-Greifswald,DE80N
+Landkreis Rostock,DE80K
+Vorpommern-Rügen,DE80L
+Nordwestmecklenburg,DE80M
+Ludwigslust-Parchim,DE80O
+Braunschweig,DE911
+Salzgitter,DE912
+Wolfsburg,DE913
+Gifhorn,DE914
+Goslar,DE916
+Helmstedt,DE917
+Northeim,DE918
+Peine,DE91A
+Wolfenbüttel,DE91B
+Göttingen,DE91C
+Diepholz,DE922
+Hameln-Pyrmont,DE923
+Hildesheim,DE925
+Holzminden,DE926
+Nienburg (Weser),DE927
+Schaumburg,DE928
+Region Hannover,DE929
+Celle,DE931
+Cuxhaven,DE932
+Harburg,DE933
+Lüchow-Dannenberg,DE934
+Lüneburg,DE935
+Osterholz,DE936
+Rotenburg Wümme,DE937
+Heidekreis,DE938
+Stade,DE939
+Uelzen,DE93A
+Verden,DE93B
+Delmenhorst,DE941
+Emden,DE942
+Oldenburg,DE943
+Osnabrück,DE944
+Wilhelmshaven,DE945
+Ammerland,DE946
+Aurich,DE947
+Cloppenburg,DE948
+Emsland,DE949
+Friesland,DE94A
+Grafschaft Bentheim,DE94B
+Leer,DE94C
+Oldenburg,DE94D
+Osnabrück,DE94E
+Vechta,DE94F
+Wesermarsch,DE94G
+Wittmund,DE94H
+Düsseldorf,DEA11
+Duisburg,DEA12
+Essen,DEA13
+Krefeld,DEA14
+Mönchen-gladbach,DEA15
+Mülheim an der Ruhr,DEA16
+Ober-hausen,DEA17
+Remscheid,DEA18
+Solingen,DEA19
+Wuppertal,DEA1A
+Kleve,DEA1B
+Mettmann,DEA1C
+Rhein-Neuss,DEA1D
+Viersen,DEA1E
+Wesel,DEA1F
+Bonn,DEA22
+Köln,DEA23
+Lever-kusen,DEA24
+Düren,DEA26
+Rhein-Erft-Kreis,DEA27
+Euskirchen,DEA28
+Heinsberg,DEA29
+Oberbergischer Kreis,DEA2A
+Rheinisch-Bergischer Kreis,DEA2B
+Rhein-Sieg-Kreis,DEA2C
+Städte-region Aachen,DEA2D
+Bottrop,DEA31
+Gelsen-kirchen,DEA32
+Münster,DEA33
+Borken,DEA34
+Coesfeld,DEA35
+Reckling-hausen,DEA36
+Steinfurt,DEA37
+Warendorf,DEA38
+Bielefeld,DEA41
+Gütersloh,DEA42
+Herford,DEA43
+Höxter,DEA44
+Lippe,DEA45
+Minden-Lübbecke,DEA46
+Paderborn,DEA47
+Bochum,DEA51
+Dortmund,DEA52
+Hagen,DEA53
+Hamm,DEA54
+Herne,DEA55
+Ennepe-Ruhr-Kreis,DEA56
+Hochsauer-landkreis,DEA57
+Märkischer Kreis,DEA58
+Olpe,DEA59
+Siegen-Wittgen-stein,DEA5A
+Soest,DEA5B
+Unna,DEA5C
+Koblenz,DEB11
+Ahrweiler,DEB12
+Altenkirchen Westerwald,DEB13
+Bad Kreuznach,DEB14
+Birkenfeld,DEB15
+Mayen-Koblenz,DEB17
+Neuwied,DEB18
+Rhein-Lahn-Kreis,DEB1A
+Westerwaldkreis,DEB1B
+Cochem-Zell,DEB1C
+Rhein-Hunsrück-Kreis,DEB1D
+Trier,DEB21
+Bernkastel-Wittlich,DEB22
+Eifelkreis Bitburg-Prüm,DEB23
+Vulkaneifel,DEB24
+Trier-Saarburg,DEB25
+Frankenthal Pfalz,DEB31
+Kaiserslautern,DEB32
+Landau in der Pfalz,DEB33
+Ludwigshafen am Rhein,DEB34
+Mainz,DEB35
+Neustadt an der Weinstraße,DEB36
+Pirmasens,DEB37
+Speyer,DEB38
+Worms,DEB39
+Zweibrücken,DEB3A
+Alzey-Worms,DEB3B
+Bad Dürkheim,DEB3C
+Donnersbergkreis,DEB3D
+Germersheim,DEB3E
+Kaiserslautern,DEB3F
+Kusel,DEB3G
+Südliche Weinstraße,DEB3H
+Rhein-Pfalz-Kreis,DEB3I
+Mainz-Bingen,DEB3J
+Südwestpfalz,DEB3K
+Regionalverband Saarbrücken,DEC01
+Merzig-Wadern,DEC02
+Neunkirchen,DEC03
+Saarlouis,DEC04
+Saarpfalz-Kreis,DEC05
+St. Wendel,DEC06
+Dresden,DED21
+Bautzen,DED2C
+Görlitz,DED2D
+Meißen,DED2E
+Sächsische Schweiz-Osterzgebirge,DED2F
+Chemnitz,DED41
+Erzgebirgskreis,DED42
+Mittelsachsen,DED43
+Vogtlandkreis,DED44
+Zwickau,DED45
+Leipzig_stadt,DED51
+Leipzig,DED52
+Nordsachsen,DED53
+Dessau-Roßlau,DEE01
+Halle (Saale),DEE02
+Magdeburg,DEE03
+Altmarkkreis Salzwedel,DEE04
+Anhalt-Bitterfeld,DEE05
+Jerichower Land,DEE06
+Börde,DEE07
+Burgenlandkreis,DEE08
+Harz,DEE09
+Mansfeld-Südharz,DEE0A
+Saalekreis,DEE0B
+Salzlandkreis,DEE0C
+Stendal,DEE0D
+Wittenberg,DEE0E
+Flensburg,DEF01
+Kiel,DEF02
+Lübeck,DEF03
+Neumünster,DEF04
+Dithmarschen,DEF05
+Herzogtum Lauenburg,DEF06
+Nordfriesland,DEF07
+Ostholstein,DEF08
+Pinneberg,DEF09
+Plön,DEF0A
+Rendsburg-Eckernförde,DEF0B
+Schleswig-Flensburg,DEF0C
+Segeberg,DEF0D
+Steinburg,DEF0E
+Stormarn,DEF0F
+Erfurt,DEG01
+Gera,DEG02
+Jena,DEG03
+Suhl,DEG04
+Weimar,DEG05
+Eichsfeld,DEG06
+Nordhausen,DEG07
+Unstrut-Hainich-Kreis,DEG09
+Gotha,DEG0C
+Kyffhäuserkreis,DEG0A
+Schmalkalden-Meiningen,DEG0B
+Sömmerda,DEG0D
+Hildburghausen,DEG0E
+Ilm-Kreis,DEG0F
+Weimarer Land,DEG0G
+Sonneberg,DEG0H
+Saalfeld-Rudolstadt,DEG0I
+Saale-Holzland-Kreis,DEG0J
+Saale-Orla-Kreis,DEG0K
+Greiz,DEG0L
+Altenburger Land,DEG0M
+Eisenach,DEG0N
+Wartburgkreis,DEG0P
