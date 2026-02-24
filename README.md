@@ -26,7 +26,7 @@ Weekly all-cause death counts for all 400 Kreise and kreisfreie Städte in Germa
 
 ## Data Sources and Licensing
 
-Data were obtained from the 16 Statistischen Landesämter, coordinated in part through Statistisches Landesamt des Freistaates Sachsen (Gz 01-0127/566/21, contact: Renate Recknagel, renate.recknagel@statistik.sachsen.de). Total acquisition cost approximately €1,870.
+Data were obtained from the 16 Statistischen Landesämter, coordinated in part through Statistisches Landesamt des Freistaates Sachsen (Gz 01-0127/566/21). Total acquisition cost €2,140 + VAT.
 
 The compiled dataset is released under **CC BY 4.0**. The underlying data from each Land carry the terms described below. All terms are compatible with open redistribution provided attribution requirements are met.
 
