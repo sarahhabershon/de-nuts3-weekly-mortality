@@ -1,5 +1,5 @@
 library("needs")
-needs(tidyverse, ggplot2, readxl, glue, lubridate)
+needs(tidyverse, ggplot2, readxl, glue, lubridate, ggrepel)
 codes <- read_csv("data/nuts3_codes.csv")
 nw_codes <- codes %>%
   filter(grepl( "DEA", code_nuts))
@@ -40,36 +40,52 @@ weeks_helper <- dates_helper %>%
   select(year_thüringen = year, week_thüringen, week_iso, year_iso)%>%
   unique()
 
-## no original file?
-hamburg <- read_csv("data/hamburg.csv") %>%
-  drop_na()%>%
- # filter(week < 53) %>%
+hamburg <- read_excel("data/Hamburg/sterbefllenachkalenderwochehh2014-2023.xlsx") 
+temp_col <- names(hamburg)[subset(c(1:length(names(hamburg))), !(c(1:length(names(hamburg))) %% 2 == 0))]%>%
+  str_extract("\\d+")
+
+hamburg <- hamburg %>%
+  select( c(subset(c(1:length(names(hamburg))), c(1:length(names(hamburg))) %% 2 == 0)))%>%
+  filter(!(row_number() %in% c(1:2)))
+
+names(hamburg) <- temp_col
+
+hamburg <- hamburg %>%
+  mutate(week = row_number())%>%
   pivot_longer(!week, names_to = "year", values_to = "deaths") %>%
   mutate(code_nuts = "DE600",
          name = "Hamburg",
-         bundesland = "Hamburg")
-
-## no original file?
-schleswig_holstein <- read_csv("data/schleswigholstein.csv") %>%
-  mutate(week = as.numeric(week))%>%
-  drop_na()%>%
+         bundesland = "Hamburg")%>%
+  filter(!is.na(deaths))
+  
+schleswig_holstein <- read_excel("data/Schleswig-Holtstein/sterbefllenachkalenderwochesh2014-2023.xlsx",
+                                 skip = 4)%>%
+  rename(week =  `Kalender- woche` ,
+         `Schleswig-Flensburg` = `Schleswig- Flensburg`)%>%
+  mutate(year = if_else(grepl("Jahr", week), as.numeric(str_extract(week, "\\d+")), NA))%>%
+  fill(year)%>%
+  filter(!grepl("Jahr", week))%>%
+  filter(!(Flensburg == "Anzahl"))%>%
+  mutate(Flensburg = as.numeric(Flensburg))%>%
   pivot_longer(!c(week, year), names_to = "name", values_to = "deaths") %>%
-  left_join(read_csv("data/SH_nuts3.csv") %>%
-              rename(name = NUTS_NAME)) %>%
-  mutate(bundesland = "Schleswig-Holstein")
+    left_join(read_csv("data/SH_nuts3.csv") %>%
+                rename(name = NUTS_NAME)) %>%
+    mutate(bundesland = "Schleswig-Holstein")
 
-## no original file?
-nordrhine_westphalen <- read_csv("data/NRW.csv", skip = 5) %>%
+nordrhein_westfalen <- read_excel("data/NRW/2024-06-25 LÜA_SF_2014-2023_Kr_KW Korrektur.xlsx",
+                                   skip = 5)%>%
   ## when using berichtsjahr (first col) sums match destatis data
-  rename(year = ...1,
-         week = Nr.) %>%
-  select(!c(Jahr, `Nordrhein-Westfalen`)) %>%
-  drop_na()%>%
-  pivot_longer(!c( year, week), names_to = "name", values_to = "deaths") %>%
-  mutate(name = gsub("Kreisfreie Stadt ", "" , name),
-         name = gsub("Kreis ", "", name),
-         bundesland = "Nordrhine-Westphalen") %>%
-  left_join(nw_codes)
+  rename(year = 1,
+         week = 2)%>%
+  select(-c(3, `Nordrhein-Westfalen`))%>%
+  filter(!is.na(week))%>%
+    pivot_longer(!c( year, week), names_to = "name", values_to = "deaths") %>%
+    mutate(name = gsub("Kreisfreie Stadt ", "" , name),
+           name = gsub("Kreis ", "", name),
+           bundesland = "Nordrhein-Westfalen") %>%
+    left_join(nw_codes)%>%
+  ## NA (zero?) deaths for bottrop in week 1 of one year
+  filter(!is.na(deaths))
 
 berlin <- read_excel("data/Sterbefälle_KW_2014-2023_K_BBB.xlsx", sheet = 1, skip = 5)  %>%
   rename(year = Jahr) %>%
@@ -105,29 +121,29 @@ sachsen_anhalt <- read_excel("data/sachsenanhalt 2025_0456.xlsx", skip = 4) %>%
   select(colnames(berlin))
 
 ## for 2024
-# rheinland_pfalz <- read_excel("data/20250406_Mortalität_Uni Leipzig_Recknagel.xlsx", skip = 6) %>%
-#   pivot_longer(!c(Jahr, Kalenderwoche), names_to = "original_name", values_to = "deaths") %>%
-#   mutate(
-#     ags = str_extract(original_name, "^\\d+"),
-#     original_name = str_trim(str_remove(original_name, "^\\d+\\s*")),
-#     week = as.numeric(str_extract(Kalenderwoche, "\\d+")),
-#     bundesland = "Rheinland-Phalz") %>%
-#   left_join(nuts_ags) %>%
-#   rename(year = Jahr) %>%
-#   select(colnames(berlin))
-
-rheinland_pfalz <- read_csv("data/rheinland_pflalz.csv") %>%
+rheinland_pfalz_24 <- read_excel("data/20250406_Mortalität_Uni Leipzig_Recknagel.xlsx", skip = 6) %>%
   pivot_longer(!c(Jahr, Kalenderwoche), names_to = "original_name", values_to = "deaths") %>%
   mutate(
     ags = str_extract(original_name, "^\\d+"),
     original_name = str_trim(str_remove(original_name, "^\\d+\\s*")),
     week = as.numeric(str_extract(Kalenderwoche, "\\d+")),
-    bundesland = "Rheinland-Phalz") %>%
+    bundesland = "Rheinland-Pfalz") %>%
   left_join(nuts_ags) %>%
   rename(year = Jahr) %>%
-  drop_na(deaths)%>%
   select(colnames(berlin))
 
+rheinland_pfalz <- read_excel("data/Rheinland-Pfalz/20240709-gesamtmortalittrlp-sachsen.xlsx", skip = 6) %>%
+  pivot_longer(!c(Jahr, Kalenderwoche), names_to = "original_name", values_to = "deaths") %>%
+  mutate(
+    ags = str_extract(original_name, "^\\d+"),
+    original_name = str_trim(str_remove(original_name, "^\\d+\\s*")),
+    week = as.numeric(str_extract(Kalenderwoche, "\\d+")),
+    bundesland = "Rheinland-Pfalz") %>%
+  left_join(nuts_ags) %>%
+  rename(year = Jahr) %>%
+  select(colnames(berlin))%>%
+  filter(!is.na(deaths))%>%
+  bind_rows(rheinland_pfalz_24)
 
 bayern <- read_excel("data/Muster_LÜA_SF_2014-2023_Kr_KW_Bayern.xlsx", skip = 5) %>%
   pivot_longer(!c(Jahr, Kalenderwoche), names_to = "name", values_to = "deaths") %>%
@@ -181,8 +197,6 @@ sachsen <- read_excel("data/109_LÜA_SF_2014-2023_Kr_KW_VIS.xlsx", skip = 5) %>%
   select(colnames(berlin))%>%
   ## filter out calculated sums
   filter(name != "Sachsen ")
-  
-
 
 # Ba-wu sent a file that did not differentiate between the two Heilbronns, nor the two Karlsruhes. So for now I am making an assumption based on the figures for 2014 as to which is which, depending on their respective populations.
 # Heilbronn Stadt has a population of 131,653, Landkreis Heilbronn has population 353,609, so based on the death values I assign Heilbronn Stadt to Heilbronn...9, and Landkreis Heilbronn to Heilbronn...10. Similar with Karlsruhe, Karlsruhe Stadt has population 308,197, Landkreis Karlsrude has population 455,350. Therefore I assign Karlsruhe Stadt to Karlsruhe...17, and Landkreis Karlsruhe to Karlsruhe...18.
@@ -208,16 +222,12 @@ select(!...1) %>%
   pivot_longer(!c(name, calendar_week), names_to = "year", values_to = "deaths") %>% 
   mutate(year = as.numeric(year),
          week = case_when(
-           ## unclear what these labels mean - possibly for weekly calculations need
-           ## to be attributed to year before/after, but for yearly sums the year is correct
-           ## in comparison with destatis yearly sums.
            calendar_week == "52/ 53 (Vorjahr)" ~ "53", 
            calendar_week == "1 (Folgejahr)" ~ "53",
            TRUE ~ calendar_week),
          code_nuts = ifelse(name == "Stadt Bremen", "DE501", "DE502"),
          bundesland = "Bremen") %>%
   mutate(week = as.numeric(week))%>%
-  ## there are week 53's for all years, some of them NAs
   drop_na(deaths)%>%
   select(colnames(berlin))
 ## in the above, the yearly sum matches with destatis.
@@ -234,7 +244,7 @@ thuringen <- read_excel("data/TH_wöchentliche Sterbefallzahlen_Uni Leipzig_0477
   filter(!is.na(Jahr)) %>% pivot_longer(!c(Jahr, Kalenderwoche), names_to = "ags" , values_to = "redacted_deaths")  %>%
   mutate(week = as.numeric(str_extract(Kalenderwoche, "\\d+")),
          year = as.numeric(Jahr),
-         bundesland = "Thuringen",
+         bundesland = "Thüringen",
          deaths = ifelse(redacted_deaths == ".", 0 , as.numeric(redacted_deaths))) %>%
   filter(nchar(ags) == 5) %>%
   left_join(nuts_ags) %>%
@@ -266,13 +276,13 @@ meck_pom <- read_excel("data/Mecklenburg-Vorpommern_LÜA_SF_2014-2023_Kr_KW.xlsx
   left_join(nuts_ags) %>%
   mutate(week = as.numeric(str_extract(Kalenderwoche, "\\d+")),
          year = as.numeric(Jahr),
-         bundesland = "Mecklenburg-Vorpommen") %>%
+         bundesland = "Mecklenburg-Vorpommern") %>%
   select(colnames(berlin))
 
 germany <- berlin %>%
   rbind(hamburg) %>%
   rbind(schleswig_holstein) %>%
-  rbind(nordrhine_westphalen) %>%
+  rbind(nordrhein_westfalen) %>%
   rbind(rheinland_pfalz) %>%
   rbind(bayern) %>%
   rbind(niedersachsen) %>%
@@ -285,35 +295,152 @@ germany <- berlin %>%
   rbind(bremen_iso_weeks) %>%
   rbind(meck_pom) %>%
   rbind(saarland) %>%
-  mutate(year = as.numeric(year))%>%
+  mutate(across(c(year, week, deaths), ~as.numeric(.)))%>%
   left_join(dates_helper %>%
               group_by(year_iso, week_iso)%>%
               ## you can also chose the first or last day of the iso week, as you prefer
               summarize (date = mean(date))%>%
               rename(year = year_iso, 
                      week = week_iso))
-  ## doesn't work like the below since weeks are now isoweeks, in accordance with eurostat
-  ## not sure what the date is supposed to do so i left it out now
-  #mutate(date = as.Date(paste0(year, "/", week, "/", 1), format ="%Y/%U/%u"))
 
-## test whether there are any more "half-weeks" for week 1
-plotdata <- germany %>% group_by(week, bundesland)%>%mutate(deaths = sum(deaths))
-ggplot(plotdata)+
-  geom_line(mapping = aes(x = week, y = deaths, color = bundesland))
-## nope, looks good
+write_csv(germany, "output/germany_isoweeks.csv")
 
-# germany_imputed <- germany %>%
-#   group_by(code_nuts) %>%
-#   arrange(date) %>%
-#   mutate(raw_mort = ifelse(is.na(deaths), lag(deaths), deaths))
-# ## what does the above do? is it reasonable?
-# 
-# ggplot(germany %>% left_join(geodata), aes(geometry = geometry, fill = bundesland)) +
-#   geom_sf() +
-#   scale_fill_viridis_d(direction = -1)
-# 
-# write_csv(germany, "germany.csv")
-  
+## test thüringen average redacted death count
+
+test <- read_excel("data/TH_wöchentliche Sterbefallzahlen_Uni Leipzig_0477-2025.xlsx", skip = 20) %>%
+  filter(!is.na(Jahr)) %>% pivot_longer(!c(Jahr, Kalenderwoche), names_to = "ags" , values_to = "redacted_deaths")  %>%
+  mutate(week = as.numeric(str_extract(Kalenderwoche, "\\d+")),
+         year = as.numeric(Jahr),
+         bundesland = "Thuringen",
+         deaths = ifelse(redacted_deaths == ".", 0 , as.numeric(redacted_deaths))) %>%
+  filter(nchar(ags) == 5) %>%
+  left_join(nuts_ags)%>%
+  group_by(year)%>%
+  summarize(
+    deaths = sum(deaths),
+    redacted_vals = sum(redacted_deaths == ".")) %>%
+  left_join(destatis_years_bl %>%
+              filter(name == "Thüringen"))%>%
+  mutate(diff = deaths_destatis - deaths)%>%
+  mutate(avg_redacted_death = diff/redacted_vals)%>%
+  select(-ags)%>%
+  relocate(name, .before = year)
+
+## shows average redacted value are ~ 11 deaths:
+mean(test$avg_redacted_death, na.rm=T)
+
+## TESTS COMPARING DISAGGREGATED AND AGGREGATED DATA (destatis)
+
+## bundesländer_years
+
+test_bl_years <- germany %>%
+  left_join(nuts_ags %>% select(ags, code_nuts))%>%
+  mutate(ags = case_when(
+    bundesland == "Sachsen" ~ "14",
+    bundesland == "Niedersachsen" ~ "03",
+    T ~ substr(ags, 1, 2)),
+    year = as.numeric(year))%>%
+  group_by(year, ags, name = bundesland)%>%
+  ## there are some NA values
+  summarize(deaths_ul = sum(deaths, na.rm = T))
+
+destatis_months_bl <- read_csv2("data/destatis_de/12613-0013_de_flat.csv")%>%
+  ## no non-numeric values. in case there are any in the future: destatis has different letters and symbols to add infos to values
+  mutate(value_num = as.numeric(value))%>%
+  filter(`3_variable_attribute_label` == "Insgesamt")
+
+destatis_years_bl <- destatis_months_bl %>%
+  group_by(year = time, ags =  `2_variable_attribute_code`, name = `2_variable_attribute_label`)%>%
+  summarise(deaths_destatis = sum(value_num))
+
+compare_yearly_sums <- destatis_years_bl %>%
+  full_join(test_bl_years)%>%
+  mutate(diff = deaths_destatis - deaths_ul)
+
+compare_total_sums <- compare_yearly_sums %>%
+  ungroup()%>%
+  select(year, name, deaths_destatis, deaths_ul)%>%
+  gather(-year, -name, key = key, value = deaths)%>%
+  drop_na(deaths)%>%
+  group_by(name, key)%>%
+  summarize(deaths = sum(deaths))
+
+labelpts <- compare_yearly_sums %>%
+  ungroup()%>%
+  select(year, name, deaths_ul, deaths_destatis)%>%
+  gather(-year, -name, key = key, value = deaths)%>%
+  filter(key == "deaths_destatis" & year == 2024)%>%
+  arrange(deaths)
+
+ggplot(compare_yearly_sums %>%
+         ungroup()%>%
+         select(year, name, länder = deaths_ul, destatis_bund = deaths_destatis)%>%
+         gather(-year, -name, key = key, value = deaths))+
+  geom_line(mapping = aes(x = year, y = deaths, color = name, linetype = key, alpha = key))+
+  scale_alpha_manual(values = c(0.4, 1), breaks = c("destatis_bund", "länder"), guide = guide_none())+
+  scale_color_manual(
+    values = rev(c('#264653', '#2e5b61', '#3f6f6c', '#558374', '#719479', '#90a479', '#b2b377', '#d6bf6f', '#ebc069', '#edb666', '#eeac63', '#efa160', '#ee965d', '#ed8a59', '#ea7d55', '#e76f51')),
+    breaks = rev(labelpts$name),
+    name = ""
+    # ,guide = guide_none()
+  )+
+  scale_linetype(name = "source", guide = guide_legend(position = "top"))+
+  # geom_text_repel(labelpts, mapping = aes(x = 2025, y = deaths, label = name),
+  #           hjust = 0,
+  #           size = 2, 
+  #           direction = "y", 
+  #           min.segment.length = 10)+
+  # xlim(2014, 2030)+
+  theme_minimal()
+
+ggsave("plots/all_bls.png",
+       dpi = 140,
+       units = "px",
+       width = 1500,
+       height = 800)
+
+ggplot(compare_yearly_sums %>%
+         ungroup()%>%
+         select(year, name, länder = deaths_ul, destatis_bund = deaths_destatis)%>%
+         gather(-year, -name, key = key, value = deaths)%>%
+         mutate(name = factor(name, levels = rev(labelpts$name))))+
+  geom_line(mapping = aes(x = year, y = deaths, color = name, linetype = key, alpha = key))+
+  scale_alpha_manual(values = c(0.4, 1), breaks = c("destatis_bund", "länder"), guide = guide_none())+
+  scale_color_manual(
+    values = rev(c('#264653', '#2e5b61', '#3f6f6c', '#558374', '#719479', '#90a479', '#b2b377', '#d6bf6f', '#ebc069', '#edb666', '#eeac63', '#efa160', '#ee965d', '#ed8a59', '#ea7d55', '#e76f51')),
+    breaks = rev(labelpts$name),
+    guide = guide_none()
+    # ,guide = guide_none()
+  )+
+  scale_linetype(name = "source", guide = guide_legend(position = "top"))+
+  # geom_text_repel(labelpts, mapping = aes(x = 2025, y = deaths, label = name),
+  #           hjust = 0,
+  #           size = 2, 
+  #           direction = "y", 
+  #           min.segment.length = 10)+
+  # xlim(2014, 2030)+
+  theme_minimal()+
+  facet_wrap(vars(name), scales = "free")
+
+ggsave("plots/compare_years_bl_facets_freey.png", 
+       dpi = 140,
+       units = "px",
+       width = 1500,
+       height = 800)
+
+ggplot(compare_total_sums %>%
+         mutate(key = str_replace_all(key, c("deaths_destatis" = "destatis_bund", "deaths_ul" = "länder"))))+
+  geom_bar(mapping = aes(x = key, y = deaths, fill = key), stat = "identity")+
+  scale_fill_manual(values = c("#2a9d8f", "#e9c46a"), name = "source", guide = guide_legend(position = "top"))+
+  theme_minimal()+
+  facet_wrap(vars(name), scales = "free")+
+  theme(axis.title = element_blank())
+
+ggsave("plots/compare_totals.png", 
+       dpi = 140,
+       units = "px",
+       width = 1500,
+       height = 800)
 
 # Excess mortality - including Germany
 
@@ -351,128 +478,3 @@ exmort_weekly_nuts3_wide <- exmort_weekly_nuts3 %>%
 
 # view(exmort_weekly_nuts3_wide %>% filter(grepl("DE", code_nuts))) %>% glimpse()
 
-
-## TESTS COMPARING DISAGGREGATED AND AGGREGATED DATA (destatis)
-
-## bundesländer_years 
-
-test_bl_years <- germany %>%
-  left_join(nuts_ags %>% select(ags, code_nuts))%>%
-  mutate(ags = case_when(
-    bundesland == "Sachsen" ~ "14",
-    bundesland == "Niedersachsen" ~ "03",
-    T ~ substr(ags, 1, 2)),
-    year = as.numeric(year))%>%
-  group_by(year, ags)%>%
-  ## there are some NA values
-  summarize(deaths_ul = sum(deaths, na.rm = T))
-
-destatis_months_bl <- read_csv2("12613-0013_de_flat.csv")%>%
-  ## no non-numeric values. in case there are any in the future: destatis has different letters and symbols to add infos to values
-  mutate(value_num = as.numeric(value))%>%
-  filter(`3_variable_attribute_label` == "Insgesamt")
-
-destatis_years_bl <- destatis_months_bl %>%
-  group_by(year = time, ags =  `2_variable_attribute_code`, name = `2_variable_attribute_label`)%>%
-  summarise(deaths_destatis = sum(value_num))
-
-compare_yearly_sums <- destatis_years_bl %>%
-  full_join(test_bl_years)%>%
-  mutate(diff = deaths_destatis - deaths_ul)
-
-ggplot(compare_yearly_sums %>%
-         ungroup()%>%
-         select(year, name, deaths_ul, deaths_destatis)%>%
-         gather(-year, -name, key = key, value = deaths))+
-  geom_line(mapping = aes(x = year, y = deaths, color = name, linetype = key))
-
-ggsave("compare_years_bl.png")
-
-ggplot(compare_yearly_sums %>%
-         ungroup()%>%
-         select(year, name, deaths_ul, deaths_destatis)%>%
-         gather(-year, -name, key = key, value = deaths))+
-  geom_line(mapping = aes(x = year, y = deaths, color = name, linetype = key))+
-  facet_wrap(vars(name))
-
-ggsave("compare_years_bl_facets.png", 
-       unit = "px", 
-       dpi = 150,
-       width = 2000,
-       height = 1500)
-
-ggplot(compare_yearly_sums %>%
-         ungroup()%>%
-         select(year, name, deaths_ul, deaths_destatis)%>%
-         gather(-year, -name, key = key, value = deaths))+
-  geom_line(mapping = aes(x = year, y = deaths, color = name, linetype = key))+
-  facet_wrap(vars(name), scales = "free")
-
-ggsave("compare_years_bl_facets_freey.png", 
-       unit = "px", 
-       dpi = 150,
-       width = 2000,
-       height = 1500)
-
-
-## thüringen
-
-test <- read_excel("data/TH_wöchentliche Sterbefallzahlen_Uni Leipzig_0477-2025.xlsx", skip = 20) %>%
-  filter(!is.na(Jahr)) %>% pivot_longer(!c(Jahr, Kalenderwoche), names_to = "ags" , values_to = "redacted_deaths")  %>%
-  mutate(week = as.numeric(str_extract(Kalenderwoche, "\\d+")),
-         year = as.numeric(Jahr),
-         bundesland = "Thuringen",
-         deaths = ifelse(redacted_deaths == ".", 0 , as.numeric(redacted_deaths))) %>%
-  filter(nchar(ags) == 5) %>%
-  left_join(nuts_ags)%>% 
-  group_by(year)%>%
-  summarize(
-    deaths = sum(deaths), 
-    redacted_vals = sum(redacted_deaths == ".")) %>% 
-  left_join(destatis_years_bl %>% 
-              filter(name == "Thüringen"))%>%
-  mutate(diff = deaths_destatis - deaths)%>%
-  mutate(avg_redacted_death = diff/redacted_vals)%>% 
-  select(-ags)%>%
-  relocate(name, .before = year)
-## shows average redacted value are ~ 10 deaths
-
-## loading eurostat to see how they count the weeks and distribute deaths around end/beginning of year
-eurostat <- read_tsv("eurostat/estat_demo_r_mwk_ts.tsv")%>%
-  gather(-c(1), key = "date", value = "deaths")%>%
-  mutate(week = as.numeric(substr(date, 7,8)),
-         year = as.numeric(substr(date, 1,4)))
-
-eurostat %>% group_by(year)%>%summarize(min_week = min(week), max_week = max(week))%>%filter(year > 2013)
-## no double weeks
-eurostat %>% group_by(year, week, `freq,sex,unit,geo\\TIME_PERIOD`)%>% summarize(n = n())%>%arrange(desc(n))
-weeks_deaths <- eurostat%>% 
-  group_by(week)%>% 
-  summarize(total = sum(as.numeric(deaths), na.rm=T))%>%
-  arrange(total)
-ggplot(weeks_deaths)+
-  geom_line(mapping = aes(x = week, y = total))
-
-
-## from https://www.destatis.de/DE/Themen/Querschnitt/Corona/_Grafik/_Interaktiv/sterbefallzahlen-woechentlich-jahre.html
-destatis_weeks_de <- read_csv2("sterbefallzahlen.csv")%>%
-  gather(-Kalenderwoche, key = year, value = deaths_destatis)%>%
-  rename(week = Kalenderwoche)%>%
-  mutate(year = as.numeric(year))%>%
-  arrange(year, week)%>%
-  drop_na()%>%
-  full_join(germany %>% 
-              group_by(year, week)%>%
-              summarize(deaths_ul = sum(deaths))) %>%
-  ## only year 2022 is comparable, from 2023 onwards berlin is missing in disaggregated data and 2024 even more
-  filter(year == 2022)%>%
-  ## why is there no data at all in "germany" for weeks 6 - 9 in 2022?
-  mutate(difference_percent = (deaths_ul/deaths_destatis - 1) * 100,
-         difference_abs = deaths_ul - deaths_destatis)
-
-ggplot(destatis_weeks_de %>%
-         select(week, deaths_ul, deaths_destatis)%>%
-         gather(-week, key = key, value = deaths))+
-  geom_line(mapping = aes(x = week, y= deaths, color = key))
-
-ggsave("compare_weeks_de_total.png")
