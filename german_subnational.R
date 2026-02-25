@@ -436,13 +436,18 @@ ggplot(compare_total_sums %>%
   theme_minimal()+
   facet_wrap(vars(name), scales = "free")+
   theme(axis.title = element_blank())+
-  labs(title = "Total deaths 2015-2021")
+  labs(subtitle = "Total deaths 2015-2021")
 
 ggsave("plots/compare_totals.png", 
        dpi = 140,
        units = "px",
        width = 1500,
        height = 800)
+
+compare_total_sums %>%
+  spread(key = key, value = deaths)%>%
+  mutate(diff = deaths_ul - deaths_destatis,
+         diff_percent = ((deaths_ul - deaths_destatis)/deaths_destatis ) * 100)
 
 # Excess mortality - including Germany
 
