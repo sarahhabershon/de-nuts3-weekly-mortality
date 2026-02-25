@@ -359,6 +359,7 @@ compare_yearly_sums <- destatis_years_bl %>%
 
 compare_total_sums <- compare_yearly_sums %>%
   ungroup()%>%
+  filter(year >= 2015 & year <= 2021)%>%
   select(year, name, deaths_destatis, deaths_ul)%>%
   gather(-year, -name, key = key, value = deaths)%>%
   drop_na(deaths)%>%
@@ -434,7 +435,8 @@ ggplot(compare_total_sums %>%
   scale_fill_manual(values = c("#2a9d8f", "#e9c46a"), name = "source", guide = guide_legend(position = "top"))+
   theme_minimal()+
   facet_wrap(vars(name), scales = "free")+
-  theme(axis.title = element_blank())
+  theme(axis.title = element_blank())+
+  labs(title = "Total deaths 2015-2021")
 
 ggsave("plots/compare_totals.png", 
        dpi = 140,
